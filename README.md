@@ -1,7 +1,16 @@
 # Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data
-Communication is one of the most important needs of all living things, especially humans. In this regard, Maslov developed a pyramid-shaped hierarchy of needs. When we look at Maslov's hierarchy of needs, physical and Right after our security needs, comes the need for belonging and love [1]. linguistic and auditory Disadvantaged people communicate through sign language to meet these needs. with these people In order to communicate, both parties must have knowledge of the subject of the sign. sign in the world The number of people who can understand and speak the language is limited. In a study conducted in the USA in 2020 on this subject, According to the study, only 1% of 48 million people with hearing impairment have knowledge of sign language. seen [2]. With this project proposal, those who have difficulty in meeting their communication needs, It is aimed to facilitate the access of disadvantaged groups to these needs. Contrary to what was done before within the scope of the project, to impose it on daily life with a completely portable design targeted. The aim to be achieved; language barrier between people with speech disabilities and others It is to be able to communicate in a healthy and fluent way without For this purpose, within the scope of this project
-Sign language movements will be converted into voice data with the glove to be designed using the Ardiuno Uno card. It will be possible to output as character information on the LCD screen by converting audio data and characters in the speaker.
-![Uploading image.png…]()
+In the developed project, it is aimed that the person who has difficulties in communication can easily communicate with the person opposite, thanks to the output of the data from the sensors on the glove, via the microprocessor used, to the person's phone as voice and text. The aim of the project is to provide a practical use by adding frequently used expressions in daily life.
+In this project;
+Arduino Nano
+5X Flex Sensors
+GY-61 Accelerometer
+HC-05 BT Module
+Switch
+Used. With this project, texts and sounds corresponding to the movements determined can be output from the mobile application. In addition, thanks to the switch, the audio outputs from the Arduino Bluetooth Text to Speech application can be taken in both Turkish and English. In addition, for energy saving, power is supplied to the arduino from the person's phone with a type c otg cable and the outputs are taken from the same phone in the same way.
+![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/b0e19267-db88-4828-833a-b0480fb066f2)
+![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/08a944d3-69d0-41d8-90dc-861e333828ab)
+![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/d99bf167-4908-4503-b99f-b3e00891ccd0)
+![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/4c9ece3b-9c87-49ee-a75a-6f7a7772c9f4)
 
-![image](https://user-images.githubusercontent.com/110938520/205091401-76baf0e3-3881-4999-8e29-d339491ac15d.png)
+
 
