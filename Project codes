@@ -1,0 +1,591 @@
+#include <SoftwareSerial.h>
+
+SoftwareSerial EEBlue(10, 11); // RX | TX bluetooth
+int switchPin = 5;
+#define xPin A6
+#define yPin A7
+const int samples = 10;//10 kere ortalama
+int flexpin1 = A1;
+int flexpin2 = A2;
+int flexpin3 = A3;
+int flexpin4 = A4;
+int flexpin5 = A5;
+
+void setup()
+{
+  pinMode (switchPin, INPUT);
+  Serial.begin(9600);
+  EEBlue.begin(9600);  // varsayılan band genişliği
+  Serial.println("\nConnect ");//bluetooth
+}
+
+void loop()
+{
+  // Feed any data from bluetooth to Terminal.
+  if (EEBlue.available()) //bluetooth
+    Serial.write(EEBlue.read()); //bluetooth
+
+  // Feed all data from terminal to bluetooth
+  if (Serial.available()) //bluetooth
+    EEBlue.write(Serial.read()); //bluetooth
+
+  int bas;
+  int isaret;
+  int orta;
+  int yuzuk;
+  int serce;
+
+  bas = analogRead(flexpin5);
+  isaret = analogRead(flexpin4);
+  orta = analogRead(flexpin3);
+  yuzuk = analogRead(flexpin2);
+  serce = analogRead(flexpin1);
+ 
+  int kbas;
+  int kisaret;
+  int korta;
+  int kyuzuk;
+  int kserce;
+
+  kbas = (bas<=190);
+  kisaret = (isaret<=190);
+  korta = (orta<=180);
+  kyuzuk = (yuzuk<=160);
+  kserce = (serce<=115);
+
+  int abas;
+  int aisaret;
+  int aorta;
+  int ayuzuk;
+  int aserce;
+
+  abas = (bas>=220);
+  aisaret = (isaret>=260);
+  aorta = (orta>=260);
+  ayuzuk = (yuzuk>=230);
+  aserce = (serce>=215);
+
+  int xRaw = 0, yRaw = 0, zRaw = 0;
+  for (int i = 0; i < samples; i++)
+  {
+    xRaw += analogRead(xPin);
+    yRaw += analogRead(yPin);
+    delay (40);
+  }
+  xRaw /= samples;// ortalamanın bölümü
+  yRaw /= samples;
+
+int yukari;
+int one;
+int sola;
+int saga;
+int asagi;
+
+yukari = (xRaw<=344) && (xRaw>=250) && (yRaw<=290);
+one = (xRaw<=330) && (xRaw>=301) && (yRaw<=349) && (yRaw>=291);
+sola = (xRaw<=300) && (yRaw<=349) && (yRaw>=291);
+saga = (xRaw>=331) && (yRaw<=349) && (yRaw>=291);
+asagi = (xRaw>=340) && (yRaw>=350);
+
+  Serial.print(" X =");  //stabil orta 320 sağ 340-300 sol 
+  Serial.print(xRaw);
+  Serial.print(" Y =");  // stabil orta 326 ön 365-265 arka
+  Serial.print(yRaw);
+   Serial.print(" Bas=");  // kapalı && (bas<=190) açık && (bas>=230)  
+  Serial.print(bas);
+  Serial.print(" isaret=");   // kapalı && (isaret<=190) açık && (isaret>=260) 
+  Serial.print(isaret);
+     Serial.print(" Orta=");   // kapalı && (orta<=180) açık && (orta>=260)
+  Serial.print(orta);
+  Serial.print(" Yuzuk=");   //kapalı && (yuzuk<=130)  açık && (yuzuk>=230)
+  Serial.print(yuzuk); 
+     Serial.print(" Serce=");   //kapalı && (serce<=115) açık && (serce>=220)
+  Serial.print(serce);
+ 
+Serial.println();
+// switchpin in low ise türkçe değilse ingilizce
+// x orta (xRaw<=344) && (xRaw>=301) sola (xRaw<=300) sağa (xRaw>=345)
+// y orta (yRaw<=349) && (yRaw>=291) yukarı (yRaw<=290) aşağı (xRaw>=350)
+// el yukarı && (xRaw<=344) && (xRaw>=301) && (yRaw<=290)
+// el öne && (xRaw<=344) && (xRaw>=301) && (yRaw<=349) && (yRaw>=291)
+// el sola && (xRaw<=300) && (yRaw<=349) && (yRaw>=291)
+// el sağa && (xRaw>=345) && (yRaw<=349) && (yRaw>=291)
+// el aşağı && (xRaw<=344) && (xRaw>=301) && (yRaw>=350)
+
+//türkçe kısım
+
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("BİZİ DİNLEDİĞİNİZ TEŞEKKÜRLER");
+        EEBlue.write("bizi dinlediğiniz için teşekkürler \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("BEN");
+        EEBlue.write("ben \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("SEN");
+        EEBlue.write("sen \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("O");
+        EEBlue.write("o \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("HOŞ GELDİNİZ");
+        EEBlue.write("hos geldiniz \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("BİZ");
+        EEBlue.write("biz \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("SİZ");
+        EEBlue.write("siz \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("ONLAR");
+        EEBlue.write("onlar \n");
+    delay(1000);
+  }
+
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("MERHABA");
+        EEBlue.write("merhaba \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("AKILLI ELDİVEN");
+        EEBlue.write("akilli eldiven \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("BİTİRME PROJESİ SUNUMU");
+        EEBlue.write("bitirme projesi sunumu \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("GİT");
+        EEBlue.write("git \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("GİTTİM");
+        EEBlue.write("gittim \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("GİTTİN");
+        EEBlue.write("gittin \n");
+    delay(1000);
+  }
+
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("AÇ");
+        EEBlue.write("aç \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("AÇTIM");
+        EEBlue.write("açtım \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("AÇTIN");
+        EEBlue.write("açtın \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("AÇTI");
+        EEBlue.write("açtı \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("KAPAT");
+        EEBlue.write("kapat \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("KAPATTIM");
+        EEBlue.write("kapattım \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("KAPATTIN");
+        EEBlue.write("kapattın \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("KAPATTI");
+        EEBlue.write("kapattı \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin) == LOW) && (yukari) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("YE");
+        EEBlue.write("ye \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("YEDİM");
+        EEBlue.write("yedim \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("YEDİN");
+        EEBlue.write("yedin \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("YEDİ");
+        EEBlue.write("yedi \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (yukari) && (kbas) && (aisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("İÇ");
+        EEBlue.write("each \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (kbas) && (aisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("İÇTİM");
+        EEBlue.write("each team \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (kbas) && (aisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("İÇTİN");
+        EEBlue.write("each teen \n");
+    delay(1000);
+
+  }
+    if ((digitalRead(switchPin) == LOW) && (yukari) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("KİM");
+        EEBlue.write("kim \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("NEREDE");
+        EEBlue.write("nerede \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("NE");
+        EEBlue.write("ne \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("NEDEN");
+        EEBlue.write("ne then \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (yukari) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("NE ZAMAN");
+        EEBlue.write("ne zaman \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("NASIL");
+        EEBlue.write("nasıl \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("Mİ");
+        EEBlue.write("mean \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("KİMİNLE");
+        EEBlue.write("kiminle \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (yukari) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("KARNIM AÇ");
+        EEBlue.write("karnım aç \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (one) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("SUSADIM");
+        EEBlue.write("susadım \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (sola) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("HASTAYIM");
+        EEBlue.write("hastayım \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (saga) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YORULDUM");
+        EEBlue.write("yoruldum \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (asagi) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("HASTANE");
+        EEBlue.write("hastane \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (asagi) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("EV");
+        EEBlue.write("ev \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (asagi) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("OKUL");
+        EEBlue.write("okul \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (asagi) && (abas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("RESTORANT");
+        EEBlue.write("restorant \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin) == LOW) && (asagi) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("KÜTÜPHANE");
+        EEBlue.write("kütüphane \n");
+    delay(1000);
+  }
+
+    if ((digitalRead(switchPin) == LOW) && (asagi) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YURT");
+        EEBlue.write("yurt \n");
+    delay(1000);
+  }
+// ingilizce kısım
+
+  if ((digitalRead(switchPin)) && (yukari) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("THANK YOU FOR LISTENİNG US");
+        EEBlue.write("thank you for listening us \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("ME");
+        EEBlue.write("me \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YOU");
+        EEBlue.write("you \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("IT");
+        EEBlue.write("it \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin)) && (yukari) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("WELCOME");
+        EEBlue.write("welcome \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("WE");
+        EEBlue.write("we \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YOU");
+        EEBlue.write("you \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (abas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("THEY");
+        EEBlue.write("they \n");
+    delay(1000);
+  }
+
+  if ((digitalRead(switchPin)) && (yukari) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("HELLO");
+        EEBlue.write("hello \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("SMART GLOVE");
+        EEBlue.write("smart glove \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("GRADUATION PROJECT PRESENTATION");
+        EEBlue.write("graduation project presentation \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin)) && (yukari) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("GO");
+        EEBlue.write("go \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I WENT");
+        EEBlue.write("i went \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YOU WENT");
+        EEBlue.write("you went \n");
+    delay(1000);
+
+  }
+  if ((digitalRead(switchPin)) && (yukari) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("OPEN");
+        EEBlue.write("open \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I OPENED");
+        EEBlue.write("i opened \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YOU OPENED");
+        EEBlue.write("you opened \n");
+    delay(1000);
+
+  }
+  if ((digitalRead(switchPin)) && (yukari) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("CLOSE");
+        EEBlue.write("close \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("I CLOSED");
+        EEBlue.write("i closed \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("YOU CLOSED");
+        EEBlue.write("you closed \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("CLOSED");
+        EEBlue.write("closed \n");
+    delay(1000);
+  }
+  if ((digitalRead(switchPin)) && (yukari) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("EAT");
+        EEBlue.write("eat \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("I ATE");
+        EEBlue.write("i ate \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("YOU ATE");
+        EEBlue.write("you ate \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("ATE");
+        EEBlue.write("ate \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (yukari) && (kbas) && (aisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("DRINK");
+        EEBlue.write("drink \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (kbas) && (aisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I DRANK");
+        EEBlue.write("i drank \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (kbas) && (aisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("YOU DRANK");
+        EEBlue.write("you drank \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (yukari) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("WHO");
+        EEBlue.write("who \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("WHERE");
+        EEBlue.write("where \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("WHAT");
+        EEBlue.write("what \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (kbas) && (aisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("WHY");
+        EEBlue.write("why \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (yukari) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("WHEN");
+        EEBlue.write("when \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("HOW");
+        EEBlue.write("how \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("DID");
+        EEBlue.write("did \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (abas) && (aisaret) && (aorta) && (kyuzuk) && (aserce)){ 
+    Serial.println("WITH WHO");
+        EEBlue.write("with who \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (yukari) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I AM HUNGRY");
+        EEBlue.write("i am hungry \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (one) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I AM THIRSTY");
+        EEBlue.write("i am thirsty \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (sola) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I AM SICK");
+        EEBlue.write("i am sick \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (saga) && (abas) && (kisaret) && (aorta) && (kyuzuk) && (kserce)){ 
+    Serial.println("I AM TIRED");
+        EEBlue.write("i am tired \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (asagi) && (kbas) && (kisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("HOSPITAL");
+        EEBlue.write("hospital \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (asagi) && (abas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("HOUSE");
+        EEBlue.write("house \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (asagi) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (aserce)){ 
+    Serial.println("SCHOOL");
+        EEBlue.write("school \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (asagi) && (abas) && (kisaret) && (korta) && (kyuzuk) && (aserce)){ 
+    Serial.println("RESTAURANT");
+        EEBlue.write("restaurant \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (asagi) && (kbas) && (aisaret) && (aorta) && (ayuzuk) && (kserce)){ 
+    Serial.println("LIBRARY");
+        EEBlue.write("library \n");
+    delay(1000);
+  }
+    if ((digitalRead(switchPin)) && (asagi) && (abas) && (aisaret) && (korta) && (kyuzuk) && (kserce)){ 
+    Serial.println("DORM");
+        EEBlue.write("dorm \n");
+    delay(1000);}
+}
+
