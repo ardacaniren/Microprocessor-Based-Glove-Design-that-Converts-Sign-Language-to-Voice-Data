@@ -10,7 +10,6 @@ Used. With this project, texts and sounds corresponding to the movements determi
 
 ![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/b0e19267-db88-4828-833a-b0480fb066f2)
 ![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/08a944d3-69d0-41d8-90dc-861e333828ab)
-![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/d99bf167-4908-4503-b99f-b3e00891ccd0)
 ![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/4c9ece3b-9c87-49ee-a75a-6f7a7772c9f4)
 ![image](https://github.com/ardacaniren/Microprocessor-Based-Glove-Design-that-Converts-Sign-Language-to-Voice-Data/assets/110938520/c66ce788-9774-4443-ae90-e66d0f568a06)
 
